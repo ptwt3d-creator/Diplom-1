@@ -2,6 +2,7 @@ import pytest
 import allure
 from praktikum.burger import Burger
 from unittest.mock import Mock
+from data import TestData
 
 
 @allure.epic("Конструктор бургеров")
@@ -13,14 +14,14 @@ class TestBurger:
     def test_set_bun(self, burger, mock_bun):
         burger.set_buns(mock_bun)
         
-        assert burger.bun.get_name() == "black bun"
+        assert burger.bun.get_name() == TestData.INGREDIENT_BLACK_BUN_NAME
 
     @allure.title("Добавление одного ингредиента (начинки)")
     @allure.description("Проверка успешного добавления начинки в список ингредиентов бургера")
     def test_add_ingredient_filling(self, burger, mock_ingredient_filling):
         burger.add_ingredient(mock_ingredient_filling)
 
-        assert burger.ingredients[0].get_name() == "cutlet"
+        assert burger.ingredients[0].get_name() == TestData.INGREDIENT_CUTLLET_NAME
 
     @allure.title("Добавление нескольких ингредиентов разных типов")
     @allure.description("Проверка корректного последовательного добавления начинки и соуса в бургер")
@@ -45,23 +46,23 @@ class TestBurger:
 
         burger_two_ingredients_sauce_filling = burger_two_ingredients_filling_sauce_bun
         
-        assert burger_two_ingredients_sauce_filling.ingredients[0].get_type() == "SAUCE"
+        assert burger_two_ingredients_sauce_filling.ingredients[0].get_type() == TestData.INGREDIENT_TYPE_SAUCE
 
     @allure.title("Расчет итоговой стоимости бургера")
     @allure.description("Параметризованный тест для проверки стоимости бургера (две стоимости булочки + стоимости ингредиентов)")
     @pytest.mark.parametrize(
         "bun_price, ing_prices, expected_total",
         [
-            # Бургер: Булка 100, котлета 100
+            # Бургер: Булки 100, котлета 100
             (100.0, [100.0], 300.0),
             
-            # Бургер: Булка 70. Сумма: 70 * 2 = 140
+            # Бургер: Булки 70. Сумма: 70 * 2 = 140
             (70.0, [], 140.0),
             
-            # Бургер: Булка 80, котлета 100, соус 50
+            # Бургер: Булки 80, котлета 100, соус 50
             (80.0, [100.0, 50.0], 310.0),
             
-            # Бургер: Булка 99.90, соус 0.0, Сумма: 99.90 * 2 = 199.80
+            # Бургер: Булки 99.90, соус 0.0, Сумма: 99.90 * 2 = 199.80
             (99.90, [0.0], 199.80)
         ]
     )
@@ -77,9 +78,9 @@ class TestBurger:
         assert burger.get_price() == expected_total
     
     @allure.title("Генерация чека для бургера")
-    @allure.description("Проверка корректности текстового формата чека и итоговой цены для бургера с двумя ингредиентами")
+    @allure.description("Проверка корректности текстового формата чека и итоговой цены для бургера с двумя ингредиентами(цена 400")
     def test_get_receipt_two_ingridients(self, burger_two_ingredients_filling_sauce_bun):
 
         receipt = burger_two_ingredients_filling_sauce_bun.get_receipt()
         
-        assert receipt == "(==== black bun ====)\n= filling cutlet =\n= sauce hot sauce =\n(==== black bun ====)\n\nPrice: 400"
+        assert receipt == TestData.CHEQUE_ORDER_TEXT_PRICE_BURGER_400
